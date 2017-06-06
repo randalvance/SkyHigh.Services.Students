@@ -28,7 +28,7 @@ namespace SkyHigh.Services.Students
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<StudentRepository>();
+            services.AddSingleton<StudentRepository>();
 
             // Add framework services.
             services.AddCors();
@@ -42,7 +42,7 @@ namespace SkyHigh.Services.Students
             loggerFactory.AddDebug();
 
             app.UseCors(builder => {
-                builder.AllowAnyOrigin();
+                builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod(); // TODO: Change this
             });
             app.UseMvc();
         }

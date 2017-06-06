@@ -18,11 +18,27 @@ namespace SkyHigh.Services.Students.Controllers
         {
             this.studentRepository = studentRepository;
         }
-        
+
         [HttpGet]
         public async Task<IEnumerable<Student>> Get()
         {
             return await this.studentRepository.ListAsync();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Post([FromBody]Student student)
+        {
+            await this.studentRepository.AddAsync(student);
+
+            return this.Created("", student); // TODO: generate resource link
+        }
+
+        [HttpDelete]
+        public async Task<ActionResult> Delete(int studentId)
+        {
+            await this.studentRepository.DeleteAsync(studentId);
+
+            return this.Ok();
         }
     }
 }
