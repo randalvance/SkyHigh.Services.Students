@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using SkyHigh.Services.Students.Repositories;
 
 namespace SkyHigh.Services.Students
 {
@@ -27,7 +28,10 @@ namespace SkyHigh.Services.Students
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddTransient<StudentRepository>();
+
             // Add framework services.
+            services.AddCors();
             services.AddMvc();
         }
 
@@ -37,6 +41,9 @@ namespace SkyHigh.Services.Students
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
+            app.UseCors(builder => {
+                builder.AllowAnyOrigin();
+            });
             app.UseMvc();
         }
     }
