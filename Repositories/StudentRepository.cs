@@ -35,6 +35,7 @@ namespace SkyHigh.Services.Students.Repositories
 
         public async Task AddAsync(Student student)
         {
+            student.StudentId = this.GetNextId();
             await Task.Run(() =>
             {
                 this.students.Add(student);
@@ -52,6 +53,11 @@ namespace SkyHigh.Services.Students.Repositories
                     this.students.Remove(student);
                 }
             });
+        }
+
+        private int GetNextId()
+        {
+            return this.students.OrderBy(x => x.StudentId).LastOrDefault()?.StudentId + 1 ?? 0;
         }
     }
 }
