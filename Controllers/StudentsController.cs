@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using SkyHigh.Services.Students.Models;
+using SkyHigh.Services.Students.Options;
 using SkyHigh.Services.Students.Repositories;
 
 namespace SkyHigh.Services.Students.Controllers
@@ -15,10 +17,12 @@ namespace SkyHigh.Services.Students.Controllers
     public class StudentsController : Controller
     {
         private StudentRepository studentRepository;
+        private EndpointOptions endpointOptions;
 
-        public StudentsController(StudentRepository studentRepository)
+        public StudentsController(StudentRepository studentRepository, IOptions<EndpointOptions> endpointOptions)
         {
             this.studentRepository = studentRepository;
+            this.endpointOptions = endpointOptions.Value;
         }
 
         [HttpGet]
@@ -31,9 +35,8 @@ namespace SkyHigh.Services.Students.Controllers
         public async Task<ActionResult> Post([FromBody]Student student)
         {
             await this.studentRepository.AddAsync(student);
-
-            // TODO: retrieve hostname from environment variable
-            var factory = new ConnectionFactory() { HostName = "rabbitmq" /* name of docker service */ };
+            
+            var factory = new ConnectionFactory() { HostName = endpointOptions.RabbitMqHostname };
 
             using (var connection = factory.CreateConnection())
             using (var channel = connection.CreateModel())

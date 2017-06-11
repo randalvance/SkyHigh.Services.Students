@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SkyHigh.Services.Students.Data;
+using SkyHigh.Services.Students.Options;
 using SkyHigh.Services.Students.Repositories;
 
 namespace SkyHigh.Services.Students
@@ -30,6 +31,9 @@ namespace SkyHigh.Services.Students
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddOptions();
+            services.Configure<EndpointOptions>(Configuration.GetSection("Endpoint"));
+
             // Environment variable should be ConnectionStrings:DefaultConnection
             var connectionString = this.Configuration.GetConnectionString("DefaultConnection");
 
