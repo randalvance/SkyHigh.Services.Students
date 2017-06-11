@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using SkyHigh.Services.Students.Data;
 using SkyHigh.Services.Students.Models;
 
@@ -19,6 +22,11 @@ namespace SkyHigh.Services.Students.Repositories
 
         public async Task<IEnumerable<Student>> ListAsync()
         {
+            // TODO: this should be in the startup, but it needs to wait for the postgre container to fully start up
+            // We need to call a script that probes the postgre container first before running migrations
+            // for more info: https://github.com/vishnubob/wait-for-it
+            // as a hack for now, let's call migrate when list was called
+            await dbContext.Database.MigrateAsync();
             return await dbContext.Students.ToAsyncEnumerable().ToList();
         }
 

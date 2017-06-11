@@ -30,7 +30,10 @@ namespace SkyHigh.Services.Students
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<StudentDbContext>(options => options.UseNpgsql("Host=localhost;Database=skyhigh-students-db;Username=randalvance;Password=P@ssw0rd"));
+            // Environment variable should be ConnectionStrings:DefaultConnection
+            var connectionString = this.Configuration.GetConnectionString("DefaultConnection");
+
+            services.AddDbContext<StudentDbContext>(options => options.UseNpgsql(connectionString));
 
             services.AddSingleton<StudentRepository>();
 
@@ -45,7 +48,14 @@ namespace SkyHigh.Services.Students
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            app.UseCors(builder => {
+            // we need to wait for postgre to full start before calling this
+            // using (var scope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
+            // {
+            //     scope.ServiceProvider.GetService<StudentDbContext>().Database.Migrate();
+            // }
+
+            app.UseCors(builder =>
+            {
                 builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod(); // TODO: Change this
             });
             app.UseMvc();
