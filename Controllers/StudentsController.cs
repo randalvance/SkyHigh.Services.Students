@@ -32,7 +32,8 @@ namespace SkyHigh.Services.Students.Controllers
         {
             await this.studentRepository.AddAsync(student);
 
-            var factory = new ConnectionFactory() { HostName = "localhost" };
+            // TODO: retrieve hostname from environment variable
+            var factory = new ConnectionFactory() { HostName = "rabbitmq" /* name of docker service */ };
 
             using (var connection = factory.CreateConnection())
             using (var channel = connection.CreateModel())
